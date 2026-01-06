@@ -1,0 +1,270 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+:root {
+    --font-family: 'Poppins', sans-serif;
+    --bg-color: #eef1f5;
+    --text-color: #333;
+    --container-bg: #ffffff;
+    --cell-bg: #e2e8f0;
+    --cell-border: #cbd5e1;
+    --selected-bg: #ec4899;
+    --selected-shadow: #be185d;
+    --hint-glow: #f59e0b;
+    --btn-bg: #10b981;
+    --btn-hover-bg: #059669;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+    --overlay-bg: rgba(0, 0, 0, 0.6);
+    --locked-bg: #cbd5e1;
+    --locked-text: #a0aec0;
+}
+
+body.dark-mode {
+    --bg-color: #1a202c;
+    --text-color: #e2e8f0;
+    --container-bg: #2d3748;
+    --cell-bg: #4a5568;
+    --cell-border: #626f83;
+    --selected-bg: #f472b6;
+    --selected-shadow: #db2777;
+    --hint-glow: #fbb_f24;
+    --btn-bg: #2dd4bf;
+    --btn-hover-bg: #14b8a6;
+    --shadow-color: rgba(0, 0, 0, 0.4);
+    --locked-bg: #4a5568;
+    --locked-text: #718096;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+button {
+    user-select: none; /* Prevents text cursor on all buttons */
+}
+
+.screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 1.5rem;
+    box-sizing: border-box;
+}
+.screen.visible { display: flex; }
+
+#level-select-screen { justify-content: flex-start; }
+#level-select-screen h1 { font-size: 2.5rem; margin-bottom: 0; }
+#level-select-screen h2 { font-size: 1.5rem; margin-top: 0; font-weight: 400; color: var(--locked-text); }
+
+#level-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 15px;
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    overflow-y: auto;
+    max-height: calc(100vh - 150px);
+}
+
+.level-btn {
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid transparent;
+    position: relative; /* Needed for lock icon positioning */
+}
+.level-btn.unlocked {
+    background-color: var(--container-bg);
+    color: var(--text-color);
+    box-shadow: 0 4px 10px var(--shadow-color);
+}
+.level-btn.unlocked:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px var(--shadow-color);
+}
+.level-btn.locked {
+    background-color: var(--locked-bg);
+    color: var(--locked-text);
+    cursor: not-allowed;
+}
+
+.lock-icon {
+    position: absolute;
+    bottom: 5px;
+    right: 7px;
+    font-size: 1rem;
+    line-height: 1;
+    opacity: 0.8;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 1rem;
+}
+.top-right-buttons {
+    display: flex;
+    gap: 10px;
+}
+.icon-btn {
+    font-size: 2rem;
+    font-weight: bold;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--container-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    box-shadow: 0 2px 5px var(--shadow-color);
+}
+#back-btn { line-height: 50px; }
+
+#game-stats {
+    display: flex;
+    justify-content: space-around;
+    gap: 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    background-color: var(--container-bg);
+    padding: 10px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+#game-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; width: 100%; }
+#game-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: clamp(5px, 1.2vw, 10px);
+    max-width: 90vmin;
+}
+
+.number-cell {
+    aspect-ratio: 1 / 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--cell-bg);
+    border: 1px solid var(--cell-border);
+    border-radius: 8px;
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-out;
+    user-select: none;
+}
+.number-cell.selected {
+    background-color: var(--selected-bg);
+    color: white;
+    transform: scale(1.1);
+    border-color: var(--selected-bg);
+    box-shadow: 0 0 15px var(--selected-shadow);
+}
+.number-cell.hint { animation: hint-pulse 1.5s infinite; }
+
+.bottom-controls { display: flex; gap: 1rem; margin-top: 1rem; }
+.bottom-controls button {
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--btn-bg);
+    color: white;
+    box-shadow: 0 2px 5px var(--shadow-color);
+    transition: background-color 0.3s, transform 0.1s;
+}
+.bottom-controls button:hover { background-color: var(--btn-hover-bg); }
+.bottom-controls button:active { transform: scale(0.98); }
+.bottom-controls button:disabled { background-color: var(--locked-bg); cursor: not-allowed; }
+
+.overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: var(--overlay-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 100;
+}
+.overlay.visible { opacity: 1; pointer-events: auto; }
+.overlay-content { text-align: center; display:flex; flex-direction:column; gap: 1rem; }
+.overlay-content h2 { font-size: 3rem; color: white; margin:0; }
+.overlay-content button {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    background-color: var(--container-bg);
+    color: var(--text-color);
+}
+
+.modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: var(--overlay-bg);
+    display: none; /* Changed for JS control */
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 200; /* Must be on top of pause overlay */
+}
+.modal.visible { 
+    display: flex;
+    opacity: 1; 
+    pointer-events: auto; 
+}
+.modal-content {
+    background-color: var(--container-bg);
+    padding: 30px;
+    border-radius: 12px;
+    width: 85%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 10px 30px var(--shadow-color);
+}
+
+.connection-line {
+    position: absolute;
+    background-color: var(--selected-bg);
+    height: 4px;
+    border-radius: 2px;
+    transform-origin: left center;
+    pointer-events: none;
+    z-index: 50;
+    box-shadow: 0 0 10px var(--selected-shadow);
+}
+
+@keyframes hint-pulse {
+    0% { box-shadow: 0 0 0 0 var(--hint-glow); }
+    70% { box-shadow: 0 0 15px 10px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+}
